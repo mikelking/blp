@@ -1,0 +1,185 @@
+#!/usr/bin/env bash
+
+############
+# base.blib - A bash library of common functions to increase reusability of code
+# 
+#
+# @install /usr/local/lib/blib
+# installation- It is recommended that this file be placed in /usr/local/lib and sourced
+# into your code via the . /usr/local/lib/base.blib method
+#
+# Conventions: 
+#  Funciton names start with lower case followed by camel text
+#  Variables start with upper case followed by camel text
+#  Library constants are written in ALL upper case letters. The should limit the amount of name space munging.
+#
+# @author Mikel King <mikel.king@olivent.com>
+# @descr 
+# @copyright 2012 Olivent Technologies, llc
+# @package base.blib
+# @version 2.0
+# @license http://opensource.org/licenses/bsd-license.php New/Simplified BSD License
+# @TODO add improved library handling and sourcing as well as move include and require to std.blib
+#	both include and require should be able to search a series of paths for the target file. These
+#	are some good examples.
+#		/usr/local/lib/blib
+#		/usr/local/lib
+#		/usr/local/lib/${MyName}
+#		./
+#
+
+SILENT=${FALSE}
+QUIET=${FALSE}
+RETURN=${TRUE}
+
+# echo "Funtion name: ${FUNCNAME}"
+
+# @experimental
+# @method getSrcPath
+# @descr this is an experimental function mostly for research. I was just trying to 
+#	validate a theory. I'll purge it from the blib in the 2.0 release
+# @todo purge from blib
+# @param void
+function getSrcPath() {
+# In this example dirname returns . which means we have just a file name to contend with.
+# Ultimately as a result of the way in which dirname processes the file name the path will
+# always be different.
+
+Blib=string.blib
+
+BlibPath=`dirname ${Blib}`
+if [ "${BlibPath}" != "." ];
+then
+	echo "Fantastic we have a winner! They are not equal."
+else
+	echo "Ok looks like we need ot try the default Blib path, because they are equal."
+fi
+	echo "BlibPath: ${BlibPath} & Blib: ${Blib} results"
+}
+
+
+# If the appropriate Optarg is set then warning and below output is suppressed.
+# 
+# @TODO gather diagnostic information and output that in lieu of the normal output.
+	# need to dump a bunch of version info and path info to the screen.
+	# this will be an involved function and 
+
+
+# @method debugOpt
+# @return $DEBUG
+function debugOpt () {
+	DEBUG=${TRUE}
+}
+
+# If the appropriate Optarg is set then warning and below output is suppressed.
+# This was functionalized because I intended to add more to it.
+#
+# @method silentOpt
+# @return $SILENT
+function silentOpt () {
+	SILENT=${TRUE}
+}
+
+
+# If the appropriate Optarg is set then warning and below output is suppressed.
+# This was functionalized because I intended to add more to it.
+#
+# @method unsetSilentOpt
+# @return $SILENT
+function unsetSilentOpt () {
+	SILENT=${FALSE}
+}
+
+# If the appropriate Optarg is set then ALL output is suppressed.
+# This was functionalized because I intended to add more to it.
+#
+# @method quiteOpt
+# @return $QUIET
+function quietOpt () {
+	QUIET=${TRUE}
+}
+
+# If the appropriate Optarg is set then ALL output is suppressed.
+# This was functionalized because I intended to add more to it.
+#
+# @method suppressLoggingOpt
+# @return $QUIET
+function suppressLoggingOpt () {
+	SupressLogging=${TRUE}
+}
+
+# If the appropriate Optarg is set then app version is displayed
+#
+# @method version
+# @return 
+function version () {
+	outputMsg "${LongName} - Version ${Version}: ${Descr} "
+}
+
+
+# @method logOutput
+# @param string $1
+# @global $LogTag = A tag to identify your entry
+# @global $LogCMD = the path to logger
+# @global $MSG
+# A simple output catcher to facilitate quiet and silence modes
+function logOutput() {
+	if [ ${SupressLogging} -eq ${FALSE} ];
+	then
+		if [[ ! ${1+isset} = isset ]];
+		then
+			echo ${MSG} | ${LogCMD} -t ${LogTag} 
+		else
+			echo "${1}" | ${LogCMD} -t ${LogTag}
+		fi
+	fi
+}
+
+# 
+# 
+#
+# @method getArrayTop
+# @descr Takes a string treating it like an array then extracts the top element 
+# @return $Fore
+function getArrayTop() {
+		if [[ ! ${1+isset} = isset ]];
+		then
+		    Fore=${1}
+    		shift
+    	else
+    		throw 4
+    	fi
+    	echo ${Fore}
+}
+
+# Unfortunately one of the main drawbacks of bash is the lack of decent process handling. It has been argued and I am of the opinion that as soon as you 
+# consider doing something that requires the complication of process handling even something as simple as knowing your script's PID you must resort to 
+# a different language. FYI...Even using solution like pidof() return less than desirable results. Perhaps bash4 will address this short coming?
+#
+# @method getMyPid
+# @descr 
+# @return $MyPid
+function getMyPid() {
+
+		if [[ ! ${1+isset} = isset ]];
+		then
+			echo "Received var 1 ${1}"
+			Process=`ps ax|grep "${1}|head -1"`
+			echo "Nothing found? ${Process}"
+    		getArrayTop ${Process}
+    		MyPid=${Fore}
+    	else
+			Process=`ps ax|grep ${SrvcName}|head -1`
+			echo ${Process}
+    		getArrayTop ${Process}
+    		MyPid=${Fore}
+			echo "Using default ${SrvcName}"
+    	fi
+}
+
+
+# The following functions can be cirmcumvented by defining the associated values for ConfPath, BlibPath & UsrBlibPath respectively
+#setConfPath
+#setBlibPath
+#setUsrBlibPath
+

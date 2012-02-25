@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+############
+# app_stub - because every good app has to start somewhere
+# @descr basically a demonstration of the basics. It is also handy to copy this file when starting your own app.
+#
+#
+# Using the following param will tell INSTALL where this file should be installed.
+# Of course I haven't written INSTALL yet so that wont happen...;-P
+#
+# @install /usr/local/lib/contrib/
+# 
+# @author Mikel King <mikel.king@olivent.com>
+# @copyright 2012 Olivent Technologies, llc
+# @package
+# @dependency blib
+# @version 2.0
+# @license http://opensource.org/licenses/bsd-license.php New/Simplified BSD License
+
+# Setting DEBUG to 1 a.k.a. TRUE and the debug.blib will be sourced in as part of std.blib
+#DEBUG=1
+
+# Setting DEV to 1 will turn on the development mode. This should only be used when building
+# or testing a new release of blib. The reason for this is that it forces blib to source in local
+# versions of files in lieu of the packaged versions. 
+DEV=1
+
+# Just to make things easier
+if [ ${DEV} ];
+then
+	. ./std.blib
+else
+	. /usr/local/lib/blib/std.blib
+fi
+
+require ${BlibPath}base.blib
+require ${BlibPath}string.blib
+require ${BlibPath}logging.blib
+
+# require the bash library specific to this application
+require ${UsrBlibPath}${MyName}.blib
+
+# include diskcheck.conf
+include ${ConfPath}${MyName}.conf

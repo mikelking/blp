@@ -1,0 +1,333 @@
+#!/bin/bash/env bash
+
+############ 
+# @pkg logging 
+# @pkgdescr logging support library for the (disk, mem, & sys) check applications
+# @version 2.0
+#
+# Using the following param will tell INSTALL where this file should be installed.
+# Of course I haven't written INSTALL yet so that wont happen...;-P
+#
+# @install /usr/local/lib/
+# installation- 
+#
+# @author Mikel King <mikel.king@olivent.com> 
+# @copyright 2012 Olivent Technologies, llc
+# @dependency blib
+# @license http://opensource.org/licenses/bsd-license.php New/Simplified BSD License
+# @todo 
+
+SupressLogging=${FALSE}
+LogTag=${SrvcName}
+LogCMD=`which logger`
+
+# Set the default values just in case the config file goes MIA.
+LogFacility="err"
+
+# @method setTmpFile
+# @descr Setup a tmp file
+# @param string $1
+# @return void
+function setTmpFile() {
+	if [[ ${1+isset} = isset ]];
+	then
+		TmpFile=${1}
+	else
+		TmpFile=/tmp/${MyName}
+	fi
+}
+
+# @method unsetTmpFile
+# @descr Taredown a tempfile
+# @param string $1
+# @return void
+function unsetTmpFile() {
+	if [[ ${1+isset} = isset ]];
+	then
+		TmpFile=${1}
+	fi
+	
+	rm ${TmpFile}
+}
+
+# @method setState
+# @descr set the error level state CertainDoom, Critical, Error, Warning or Info (default)
+# @param string 
+function setState () {
+	if [[ ${1+isset} = isset ]];
+	then
+		State=${1}
+	else
+		State="Info"
+	fi
+}
+
+# @method setThreshold
+# @descr set the threshold level state CertainDoom, Critical, Error, Warning or Info (default)
+# @param string 
+function setThreshold () {
+	if [[ ${1+isset} = isset ]];
+	then
+		Threshold=${1}
+	else
+		Threshold=0
+	fi
+}
+
+# sample JSON message: {"State":"Critical","Host":"WD-0989","Service":"diskcheck","Mount":"/","Threshold":"90%","Free":"38G","Size":"500G","Text":"Critical: Mount / exceeded the 90% threshold. Only 38G of 500G remaining."}
+
+# @method throwErrorMsg
+# @descr throw the error level state CertainDoom, Critical, Error, Warning or Info (default)
+# @param string 
+# @todo rework to make this an independent entity. The function needs to be generic across all system checkers any specificity should be addressed within the appropriate checker's library and pasturized prior to reaching this point.
+function throwErrorMsg () {
+
+	ErrorMSG="${TEXT}"
+
+	if [[ ${JsonOut} = ${TRUE} ]];
+	then
+		ErrorMSG=$JsonErrorMSG
+	fi
+		
+	if [[ ! ${InfoRun} = ${TRUE} ]];
+	then
+		logOutput "${ErrorMSG}"
+	else
+		outputMsg "${ErrorMSG}"
+	fi
+}
+
+
+
+# @method setLogTag
+# @param string $1
+# @global $LogTag = A tag to identify your entry
+# @global $LogCMD = the path to logger
+# @global $MSG
+# A simple output catcher to facilitate quiet and silence modes
+function setLogTag() {
+	LogTag=${MyName}
+}
+
+# @method setLogFac
+# @param string $1
+# @global $LogTag = A tag to identify your entry
+# @global $LogCMD = the path to logger
+# @global $MSG
+# A simple output catcher to facilitate quiet and silence modes
+function setLogFac() {
+	if [[ ${1+isset} = isset ]];
+	then
+		LogFac=${1}
+	fi
+}
+
+# @method setLogOptions
+# @param string $1
+# @global $LogTag = A tag to identify your entry
+# @global $LogCMD = the path to logger
+# @global $MSG
+# A simple output catcher to facilitate quiet and silence modes
+function setLogOptions() {
+	if [[ ${LogTag+isset} = isset ]];
+	then
+		setLogTag
+		LogOpt="-t ${LogTag}"
+	fi
+	if [[ ${LogTag+isset} = isset ]];
+	then
+		LogOpt="-p ${LogFac} ${LogOpt}" 
+	fi	
+}
+
+
+# @method syslogOut
+# @descr syslog output is always sent. You can not silence the syslog...
+# @param string $1
+# @return void
+function syslogOut() {
+	echo "${1}" | ${LogCMD} -t ${LogTag} 
+}
+
+
+# @method logOutput
+# @descr A simple output catcher to facilitate quiet, silence & advanced modes of ouput generation
+# @note This method also ensures that the subsequent calls to the various output modes are properly realized.
+# @param string $1
+# @global $LogTag = A tag to identify your entry
+# @global $LogCMD = the path to logger
+# @global $MSG
+function logOutput() {
+	if [[ ! ${1+isset} = isset ]];
+	then
+		ErrMsg=${MSG}
+		syslogOut "${ErrMsg}" # Don't forget to encapsulate the varible in quotes or you won't get the whole string.
+	else
+		ErrMsg="${1}"
+		syslogOut "${ErrMsg}" # Don't forget to encapsulate the varible in quotes or you won't get the whole string.
+	fi
+}
+
+# @method jsonLogOut
+# @descr this is a sophisticated json output generator.
+# @note I am just not ready to tackle this one yet.
+# @param string $1
+# @return void
+# @todo this function has not be coded yet nor has it been truly specd 
+function jsonLogOut() {
+	echo "${1}" | ${LogCMD} -t ${LogTag} 
+}
+
+
+# @method mixedLogOut
+# @descr send a machine parsable message to syslog in lieu of the normal human readable version which will always be sent to STDOUT unless silenced
+# @param string $1
+# @return void
+# @todo this function has not be coded yet nor has it been truly specd 
+function mixedLogOut() {
+	echo "${1}" | ${LogCMD} -t ${LogTag} 
+}
+
+# @method facilityOpt
+# @param string $1
+# @return $LogFacility
+function facilityOpt() {
+  if [[ ${1+isset} = isset ]];
+  then
+    LogFacility=${1}
+  fi
+}
+
+# @method nameOpt
+# @param string $1
+# @return $LotTag
+function nameOpt() {
+  if [[ ${1+isset} = isset ]];
+  then
+    LogTag=${1}
+  fi
+}
+
+# @method warningOpt
+# @descr used to override the default value or the values set in the associated config file
+# @param string $1
+# @return $Warning
+function warningOpt() {
+  if [[ ${1+isset} = isset ]];
+  then
+    Warning=${1}
+  fi
+}
+
+# @method errorOpt
+# @descr used to override the default value or the values set in the associated config file
+# @param string $1
+# @return $Error
+function errorOpt() {
+  if [[ ${1+isset} = isset ]];
+  then
+    Error=${1}
+  fi
+}
+
+# @method criticalOpt
+# @descr used to override the default value or the values set in the associated config file
+# @param string $1
+# @return $Critical
+function ciritcalOpt() {
+  if [[ ${1+isset} = isset ]];
+  then
+    Critical=${1}
+  fi
+}
+
+# @method DoomOpt
+# @descr used to override the default value or the values set in the associated config file
+# @param string $1
+# @return $CertainDoom
+function doomOpt() {
+  if [[ ${1+isset} = isset ]];
+  then
+    CertainDoom=${1}
+  fi
+}
+
+# @method MixedOpt
+# @param string $1
+# @return $MixedOut
+function mixedOpt() {
+  if [[ ${1+isset} = isset ]];
+  then
+    MixedOut=${1}
+  fi
+}
+
+# @method jsonOpt
+# @return $JsonOut
+function jsonOpt() {
+    JsonOut=${TRUE}
+}
+
+# @note THESE functions may be obselete 
+
+# @note Most applications will only need 3 levels of error messaging. I like this final tier message as a way of letting me know that  the defication is about to hit the rotary oscillator. Generally I recomment setting this to 98% of whatever metric you are using as your threshold. For instance disk space usage would be 98 where as CPU load might be 10.
+
+# @method setDoomMsg
+# @descr a generic wrapper for setting the message sent to syslog. Remember to set the four threshold variables in your source or config file before running this.
+# @param string $MSG
+function setDoomMsg() {
+	if [[ ${1+isset} = isset ]];
+	then
+		DoomMessage=${1}
+	else
+		DoomMessage="Doom: Something happen but this is only a default message."
+	fi
+}
+
+# @method setCriticalMsg
+# @descr a generic wrapper for setting the message sent to syslog. Remember to set the four threshold variables in your source or config file before running this.
+# @param string $MSG
+function setCriticalMsg() {
+	if [[ ${1+isset} = isset ]];
+	then
+		CriticalMessage=${1}
+	else
+		CriticalMessage="Critical: Something happen but this is only a default message."
+	fi
+}
+
+# @method setErrorMsg
+# @descr a generic wrapper for setting the message sent to syslog. Remember to set the four threshold variables in your source or config file before running this.
+# @param string $MSG
+function setErrorMsg() {
+	if [[ ${1+isset} = isset ]];
+	then
+		ErrorMessage=${1}
+	else
+		ErrorMessage="Error: Something happen but this is only a default message."
+	fi
+}
+
+# @method setWarningMsg
+# @descr a generic wrapper for setting the message sent to syslog. Remember to set the four threshold variables in your source or config file before running this.
+# @param string $MSG
+function setWarningMsg() {
+	if [[ ${1+isset} = isset ]];
+	then
+		WarnMessage=${1}
+	else
+		WarnMessage="Warning: Something happen but this is only a default message."
+	fi
+}
+
+# @method setInfoMsg
+# @descr a generic wrapper for setting the message sent to syslog. Remember to set the four threshold variables in your source or config file before running this.
+# @param string $MSG
+function setInfoMsg() {
+	if [[ ${1+isset} = isset ]];
+	then
+		InfoMessage=${1}
+	else
+		InfoMessage="Info: Something happen but this is only a default message."
+	fi
+}

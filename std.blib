@@ -1,0 +1,335 @@
+#!/usr/bin/env bash
+
+
+############
+# std.blib - A bash library of common functions to increase reusability of code
+# 
+#
+# @install /usr/local/lib/blib
+# installation- It is recommended that this file be placed in /usr/local/lib/blib and sourced
+# into your code via the . /usr/local/lib/blib/std.blib method
+#
+# Conventions: 
+#  Funciton names start with lower case followed by camel text
+#  Variables start with upper case followed by camel text
+#
+# @author Mikel King <mikel.king@olivent.com>
+# @descr Basically all this file does is setup the standard include/require hiearchy. If you have defined these values
+# then these functions will respect these definitions if they are set prior to calling this file. Obviously if you set
+# them after you call this file then it really doesn't matter.
+# @copyright 2012 Olivent Technologies, llc
+# @package std.blib
+# @version 2.0
+# @license http://opensource.org/licenses/bsd-license.php New/Simplified BSD License
+# @todo draft a bashdoc.txt file that explains the @tags
+
+
+# Borrowing a bit of functionality from PHP base.blib contains the require and include methods. Simply source this file in and then you can use those functions for more detail please review the notes in the  associated file. FYI... A .blib is simply a bash library file, yes I made this up but I think it's relatively self explanatory.
+
+# setting up boolean styles values
+TRUE=1
+FALSE=0
+
+# Set to true to turn on development mode. Basically this allows for concurrent development of blib while maintaining a production installaiton of the system. When enabled it forces the system to use a local copy of the library files.
+# Setting DEV to 1 will turn on the development mode. This should only be used when building
+# or testing a new release of blib. The reason for this is that it forces blib to source in local
+# versions of files in lieu of the packaged versions. 
+# DEV=${FALSE}
+
+# Set to true to enable debug. The degbug.blib file is automatically sourced in when activated. See debug.blib for more information.
+# DEBUG=${FALSE}
+
+FILEHIER="local blib conf usrblib"
+
+# @method checkDebug
+# @descr Designed to test the debug particles. This is a test function that will be removed once we
+	# go to production with the next release.
+# @param NONE
+# @return VOID
+function checkDebug() {
+	if [[ ${DEBUG+isset} = isset ]];
+	then
+		if [ $DEBUG -eq ${TRUE} ];
+		then
+			HERE=`pwd`
+			echo "Hey dbg! By the way we are ${HERE}"
+			. ./debug.blib
+			#require ${BlibPath}debug.blib
+		fi
+	fi
+}
+
+# This is a basic constuct and may remain to allow one to develop new versions of the library on a 
+# system where it is already installed. Plans are in the works to add a path array type sourcing 
+# solution into the langauge so that one can simply include/reuire FileName and the system will
+# walk a search path for the apprpriate addition. 
+#
+# @method checkDev
+# @descr Sets the appropriate paths relative to the local environment for development purposes.
+# @param NONE
+# @return VOID
+function checkDev() {
+	if [ ${DEV} -eq ${TRUE} ];
+	then
+		setBlibPath "./"
+		setConfPath "./"
+		setUsrBlibPath "./"
+	else
+		setBlibPath
+		setConfPath
+		setUsrBlibPath	
+	fi
+}
+
+
+# Setting the default locations for these entities. Utilizing this construct you can override these values at anytime within your script.
+# Depending on the version of bash you are running you may be able to use the single line version of the following default assignment code. It is my belief that this newer construct is part of bash 4. In any event the second method will work across versions.
+
+# @method setConfPath
+# @descr Sets the appropriate config file path. You can override this by manually setting the value prior to sourcing base.blib
+# or after by executing this function with a pass parameter
+# @param 
+# @return TRUE | unless otherwise specified
+function setConfPath() {
+	Property="ConfPath"
+	
+	if [[ ${1+isset} = isset ]];
+	then
+		ConfPath=${1}
+	fi
+	#${ConfPath:=/usr/local/etc/}
+	if [[ ! ${ConfPath+isset} = isset ]];
+	then
+		ConfPath=/usr/local/etc/
+	fi
+	
+	if [[ ${DEBUG+isset} = isset ]];
+	then
+		debugOutput "${Property}: ${ConfPath}"
+	fi
+}
+
+# @method setBlibPath
+# @descr Sets the appropriate bash library file path. You can override this by manually setting the value prior to sourcing base.blib
+# or after by executing this function with a pass parameter
+# @param void | mixed
+# @return TRUE | unless otherwise specified
+function setBlibPath() {
+	Property="BlibPath"
+
+	if [[ ${1+isset} = isset ]];
+	then
+		BlibPath=${1}
+	fi
+	#${BlibPath:="/usr/local/lib/blib"}	
+	if [[ ! ${BlibPath+isset} = isset ]];
+	then
+		BlibPath=/usr/local/lib/blib/
+	fi
+
+	if [[ ${DEBUG+isset} = isset ]];
+	then
+		debugOutput "${Property}: ${BlibPath}"
+	fi
+}
+
+# @method setUsrBlibPath
+# @descr Sets the appropriate path to user defined bash library files. You can override this by manually setting the value prior to sourcing base.blib
+# or after by executing this function with a pass parameter
+# @param void | mixed
+# @return TRUE | unless otherwise specified
+# @todo I hope to eliminate the need for this in the future. My goal is to grant blib a little more intelligence and make the selection of user libs somewhat more automagick.
+function setUsrBlibPath() {
+	Property="UsrBlibPath"
+	
+	if [[ ${1+isset} = isset ]];
+	then
+		UsrBlibPath=${1}
+	fi
+	#${UsrBLibPath:="/usr/local/lib/"}	
+	if [[ ! ${UsrBlibPath+isset} = isset ]];
+	then
+		UsrBlibPath=/usr/local/lib/`basename ${0}`/
+	fi
+
+	if [[ ${DEBUG+isset} = isset ]];
+	then
+		debugOutput "${Property}: ${UsrBlibPath}"
+	fi
+}
+
+# @method getMyProcessName
+# @descr Sets the var MyName to match the application name.
+# or after by executing this function with a pass parameter
+# @return MyName
+function getMyProcessName() {
+	MyName=`basename ${0}`
+	#echo ${MyName}
+	
+	# @TODO purge this reference from future versions as it's been replaced w/ $MyName in the std.blib
+	SrvcName=`basename ${0} .sh`
+}
+
+# @method getMyHostName
+# @descr Sets the var MyName to match the application name.
+# or after by executing this function with a pass parameter
+# @return $Host
+function getMyHostName() {
+	Host=`hostname -s`
+}
+
+# @method include
+# @param string $1
+# An include file is a convenience container. These are things that are nice to have but may be set via command line or by predefined default values. If the include file is missing the worst thing that should happen is a warning (unless suppressed) should be generated.
+function include()  {
+
+	# if nothing is passed then we have a problem, be nice
+	if [[ ! ${1+isset} = isset ]];
+	then
+		throw 3
+	fi
+	
+	# if the source file exists then read it else thro and exception
+	if [ -e ${1} ];
+		then
+		#outputMsg "Reading ${1}"
+		. ${1}
+	else
+		MSG="Warning: ${1} is missing"
+		throw 2
+	fi
+}
+
+# @method require
+# @param string $1
+# A require file is something that is essential to the operation of the program. Without this file the whole operation will	come crumbling down thus generating an exception error halting all execution.
+function require()  {
+
+	# if nothing is passed then we have a problem, be nice
+	if [[ ! ${1+isset} = isset ]];
+	then
+		throw 3
+	fi
+	
+	# if the source file exists then read it else thro and exception
+	if [ -e ${1} ];
+	then
+		. ${1}
+	else
+		# This allows overriding when the appropriate cli flag is set
+		if [[ ${QUIET} = ${TRUE} ]];
+		then
+			SILENT=${TRUE}
+		else
+			SILENT=${FALSE} 
+		fi
+		MSG="Error: ${1} is missing. Execution terminated."
+		throw 1
+	fi
+}
+
+# @method outputMsg
+# @param string $1
+# @global $MSG
+# A simple output catcher to facilitate quiet and silence modes
+function outputMsg() {
+	if [ ${SILENT} -eq ${FALSE} ];
+	then
+		if [[ ! ${1+isset} = isset ]];
+		then
+			echo ${MSG}
+		else
+			echo ${1}
+		fi
+	fi
+}
+
+# @descr This encapsulates the exception handling into a fairly simple
+# and concise package. It makes use of basic parameter passing and executes
+# exception processing based on predetermined action levels. Levels 0-4 are
+# system specified, 5 & 6 are currently reserved and 7-10 are user specified.
+# @method throw
+# @param string $1
+# @global $EXCEPTION
+function throw(){
+	if [[ ${1+isset} = isset ]];
+	then
+		EXCEPTION=${1}
+	fi
+	
+	case ${EXCEPTION} in
+	# Normal level
+	[0]*)
+	;;
+	# Critical error level exception
+	[1]*)
+	outputMsg
+	exit ${EXCEPTION}
+	;;
+	# Warning level exception
+	[2]*)
+	outputMsg
+	;;
+	# Missing file specification
+	[3]*)
+	outpuMsg "Missing filename specification. "
+	exit ${EXCEPTION}
+	;;
+	# Required parameter or optarg is missing
+	[4]*)
+	outputMsg
+	# need to test if calling helpMsg here will work
+	exit ${EXCEPTION}
+	;;
+	# Reserved (continue on error)
+	[5]*)
+	;;
+	# reserved (halt on error)
+	[6]*)
+	;;
+	# Application defined continue on error
+	[7]*)
+	outputMsg
+	;;
+	# Application defined halt on error
+	[8]*)
+	outputMsg
+	exit ${EXCEPTION}
+	;;
+	# Application defined halt on error
+	[9]*)
+	outputMsg
+	exit ${EXCEPTION}
+	;;
+	# Application defined halt on error
+	[10]*)
+	outputMsg
+	exit ${EXCEPTION}
+	;;
+	# Oops level exception
+	*)
+	MSG="You know I've looked every where and what you have done has left me completely flummoxed. I honestly do not know what it is that you've done to receive this message, thus you win a prize. You can pick up your prize behind the Port Authority bus terminal at 0200 on the second Tuesday in January. In all likelyhood you have called throw without a parameter or neglected to properly set your EXCEPTION level."
+	outputMsg
+	exit ${EXCEPTION}
+	;;
+	esac
+}
+
+# @experimental
+# @method report
+# @descr Since bash functions do not usually return anything I added my own solution. Keep in mind that there is a return function but it only handles numerical return codes. A zero assigned to $? mean success and anything else equals failure. Usung this report function does require a bit more finnesse in order to achieve good results but it allows you to exit with a string, array or other numerical.
+# @note You will need to immediately capture the result into a new variable or it may be clobbered by another funtion call.
+# @param void | mixed
+# @return TRUE | unless otherwise specified
+function report() {
+	# if nothing is passed then we have a problem, be nice
+	if [[ ${1+isset} = isset ]];
+	then
+		RESULT=${1}
+	fi
+}
+
+getMyProcessName
+getMyHostName
+checkDebug
+checkDev

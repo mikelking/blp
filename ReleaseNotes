@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+cat << ReadThisMsg
+
+Release the bash library a.k.a blib version 1.1
+License: the new/simple BSD license 
+
+Currently the library contains the following four files;
+
+	base.blib
+	debug.blib
+	std.blib
+	string.blib
+
+Each bash library file has been crafted for a specific purpose and as the library grows these files will be expanded.
+
+The main library file std.blib sets the foundation for the subsequent libraries thus is required for any of their usage. It is important to 
+properly source this into the head of your script prior to accessing any of the other libraries. I hope to expand this file's usage at some 
+point as well as make it easier to implement further enhancements. 
+
+The base.blib file contains a handful of useful generic functions which over time could be branched out into their own repository. I am 
+working to limit such branching but keep in mind that this is always a possibility. For instance the outputMsg and logOutput functions are 
+prime candidates for relocation as well as anything tide to these methods.
+
+String manipulation has been a goal and I have worked to include functions that I use for this purpose some are just encapsulations of bash 
+built in constructs. I am still working on cleaning this library up and really could use some assistance with streamlining this file.
+
+New in this build is the debug library which contains two functions I created to help me troubleshoot new scripts. Primarily I use the 
+setCheckPoint function and only included the setBreakPoint function for the sake of completeness. I am sure over time this library will be 
+enhanced but as of right now this is what I have.
+
+Most of the funcitons in the library have been commented with phpdoc style comment markers. However there are several that I made up for the 
+sake of clarity. Hopefully someone will consider creating a bashdoc utility that can parse these into some sort of useful documentation. As 
+always I have included my usual commentary which sometimes explains what I was thinking when I wrote a particular block of code. This is 
+especially true if I feel that I've take a short route that I just couldn't riddle out a better way. The comments are there to remind me of 
+this and hopefully spark some sort of epiphany at some later date.
+
+Ok that is all for now
+
+ReadThisMSG
