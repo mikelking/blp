@@ -2,22 +2,22 @@
 
 
 cat << BASHDocMsg
-As of right now bashdoc is really just a personal convention. It is something that I intend to implement in tandem to blib. That is why you will see my files are all documented using this non existent standard. 
+As of right now bashdoc is really just a personal convention. It is something that I intend to implement in tandem to blp. That is why you will see my files are all documented using this non existent standard. 
 
 I have used a few other DOC systems and intend to make bashdoc a bit more functional. This is why I have included things like the intall tags that enable you to specify the proper installation of an element. 
 
 It is evolving and depending on how much help I get with the project will determine how much I can conceivably accomplish. I will add a more formalized definition of the tags so as time permits.
 
-I will also include a bashdoc.blib in the distribution that will hopefully address some of these action items. In any event I haven't exactly sussed this all out yet.
+I will also include a bashdoc.blp in the distribution that will hopefully address some of these action items. In any event I haven't exactly sussed this all out yet.
 
 
 ############
-# std.blib - A bash library of common functions to increase reusability of code
+# std.blp - A bash library of common functions to increase reusability of code
 # 
 #
-# @install /usr/local/lib/blib
-# installation- It is recommended that this file be placed in /usr/local/lib/blib and sourced
-# into your code via the . /usr/local/lib/blib/std.blib method
+# @install /usr/local/lib/blp
+# installation- It is recommended that this file be placed in /usr/local/lib/blp and sourced
+# into your code via the . /usr/local/lib/blp/std.blp method
 #
 # Conventions: 
 #  Funciton names start with lower case followed by camel text
@@ -29,7 +29,7 @@ I will also include a bashdoc.blib in the distribution that will hopefully addre
 # if they are set prior to calling this file. Obviously if you set them after you call
 # this file then it really doesn't matter.
 # @copyright 2012 Olivent Technologies, llc
-# @package std.blib
+# @package std.blp
 # @version 2.0
 # @license http://opensource.org/licenses/bsd-license.php New/Simplified BSD License
 # @todo draft a bashdoc.txt file that explains the @tags
@@ -47,7 +47,7 @@ I will also include a bashdoc.blib in the distribution that will hopefully addre
 #
 # @author Mikel King <mikel.king@olivent.com> 
 # @copyright 2012 Olivent Technologies, llc
-# @dependency blib
+# @dependency blp
 # @license http://opensource.org/licenses/bsd-license.php New/Simplified BSD License
 # @todo 
 

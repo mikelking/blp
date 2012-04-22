@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 
-App=blib
+App=blp
 Version=2.0
-BlibPath=/usr/local/lib
+blpPath=/usr/local/lib
 ConfPath=/usr/local/etc
 BinPath=/usr/local/bin
 
-if [ -e /usr/local/lib/blib/std.blib ];
+if [ -e /usr/local/lib/blp/std.blp ];
 	then
-	. /usr/local/lib/blib/std.blib
-	if [ ${Version} = ${BlibVer}  ];
+	. /usr/local/lib/blp/std.blp
+	if [ ${Version} = ${blpVer}  ];
 	then
-		echo "Blib version ${BlibVer} is already installed. Aboarting operation"
+		echo "blp version ${blpVer} is already installed. Aboarting operation"
 		exit
 	fi
 fi
@@ -21,12 +21,12 @@ fi
 	echo "Installing ${App} version: ${Version}"
 
 	echo "Installing the appropriate libraries."
-	if [ ! -e /usr/local/lib/blib ];
+	if [ ! -e /usr/local/lib/blp ];
 	then
-		mkdir ${BlibPath}/blib
+		mkdir ${blpPath}/blp
 	fi
 	
-	cp  *.blib ${BlibPath}/blib/
+	cp  *.blp ${blpPath}/blp/
 
 	echo
 	echo "Installation is complete."

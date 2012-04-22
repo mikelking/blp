@@ -1,0 +1,79 @@
+#!/bin/bash/env bash
+
+############ 
+# debug.blp - Support library for the setting debug operations
+#
+# installation- 
+# 
+# run file- /usr/local/bin
+# blp files- /usr/local/lib/blp
+# app blp files- /usr/local/lib
+# config files- /usr/local/etc
+#
+# Using the following param will tell INSTALL where this file should be installed.
+# Of course I haven't written INSTALL yet so that wont happen...;-P
+#
+# @install /usr/local/lib/blp
+#
+# @author Mikel King <mikel.king@olivent.com> 
+# @copyright 2012 Olivent Technologies, llc
+# @package debug
+# @dependency blp
+# @version 2.0
+# @license http://opensource.org/licenses/bsd-license.php New/Simplified BSD License
+# @todo establish better output operations. Currently when in debug mode we just echo. Also need
+	# a better method to enable debug.
+
+
+TRUE=1
+FALSE=0
+
+DEBUG=${TRUE}
+
+CheckPoint=0
+
+# @method setCheckPoint
+# @descr basically ouputs a message including an increament of the CheckPoint value and a tag name like ${FUNCNAME}
+# @usage setCheckPoint ${FUNCNAME} from inside of a function
+# @global $CheckPoint
+# @param string $1 
+function setCheckPoint() {
+	if [[ ${1+isset} = isset ]];
+	then
+		local _FuncName=${1}
+	fi
+	CheckPoint=$((${CheckPoint}+1))
+	
+	echo "Check point # ${CheckPoint} in entity ${_FuncName}."
+}
+
+
+
+# @method setBreakPoint
+# @descr basically ouputs a message including tag name like ${FUNCNAME} then halts execution
+# @param string $1 
+function setBreakPoint() {
+	if [[ ${1+isset} = isset ]];
+	then
+		local _FuncName=${1}
+	fi
+		
+	echo "Break point encountered in entity ${_FuncName}."
+	
+}
+
+# @method debugOutput
+# @descr basically ouputs a message including tag name like ${FUNCNAME} then halts execution
+# @param string $1 
+function debugOutput() {
+	
+	if [ ${DEBUG} = ${TRUE} ]
+	then
+		if [[ ${1+isset} = isset ]];
+		then
+			echo ${1}		
+		fi
+	
+	fi
+}
+
