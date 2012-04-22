@@ -2,23 +2,24 @@
 
 cat << ReadThisMsg
 
-Release the bash library a.k.a blib version 1.1
-License: the new/simple BSD license 
+@Release: The bash library a.k.a blp version 2_b1 This is beta 1
+@License: The new/simple BSD license (modified) 
+@Update:
 
 Currently the library contains the following four files;
 
-	base.blib
-	debug.blib
-	std.blib
-	string.blib
+	base.blp
+	debug.blp
+	std.blp
+	string.blp
 
 Each bash library file has been crafted for a specific purpose and as the library grows these files will be expanded.
 
-The main library file std.blib sets the foundation for the subsequent libraries thus is required for any of their usage. It is important to 
+The main library file std.blp sets the foundation for the subsequent libraries thus is required for any of their usage. It is important to 
 properly source this into the head of your script prior to accessing any of the other libraries. I hope to expand this file's usage at some 
 point as well as make it easier to implement further enhancements. 
 
-The base.blib file contains a handful of useful generic functions which over time could be branched out into their own repository. I am 
+The base.blp file contains a handful of useful generic functions which over time could be branched out into their own repository. I am 
 working to limit such branching but keep in mind that this is always a possibility. For instance the outputMsg and logOutput functions are 
 prime candidates for relocation as well as anything tide to these methods.
 
