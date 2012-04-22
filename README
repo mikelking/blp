@@ -1,8 +1,18 @@
 #!/usr/bin/env bash
 
 cat << ReadMeMSG
-Blib version 2.0 is a library of bash functions (a.k.a. blib), written by Mikel King. This library was selected because it is licensed under the new/simple BSD license which essentially means do what you want with the code, but it would be  nice if you contributed back to the project as well as the BSD community.
+The bash library project version 2.0 is a library of bash functions (a.k.a. blp,
+formerly known as blib), written by Mikel King.
 
-Run the basic installation script as root to place the components in their proper locations and adjust permissions as required and hope for the best. Actually it should place the standard blib files as well as create a folder for the app library files files in /usr/local/lib.
+This library was selected because it is licensed under the new/simple BSD license 
+which essentially means do what you want with the code, but it would be nice if 
+you contributed back to the project as well as the BSD community. The only 
+restriction is that you are prohibited from relicensing any of this projects 
+code under another license. 
+
+Run the basic installation script as root to place the components in their proper 
+locations and adjust permissions as required and hope for the best. Actually it 
+should place the standard blib files as well as create a folder for the app 
+library files files in /usr/local/lib.
 
 ReadMeMSG
