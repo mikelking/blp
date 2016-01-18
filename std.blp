@@ -178,72 +178,6 @@ function getMyHostName() {
 	Host=`hostname -s`
 }
 
-# @method include
-# @param string $1
-# An include file is a convenience container. These are things that are nice to have but may be set via command line or by predefined default values. If the include file is missing the worst thing that should happen is a warning (unless suppressed) should be generated.
-function include()  {
-
-	# if nothing is passed then we have a problem, be nice
-	if [[ ! ${1+isset} = isset ]];
-	then
-		throw 3
-	fi
-	
-	# if the source file exists then read it else thro and exception
-	if [ -e ${1} ];
-		then
-		#outputMsg "Reading ${1}"
-		. ${1}
-	else
-		MSG="Warning: ${1} is missing"
-		throw 2
-	fi
-}
-
-# @method require
-# @param string $1
-# A require file is something that is essential to the operation of the program. Without this file the whole operation will	come crumbling down thus generating an exception error halting all execution.
-function require()  {
-
-	# if nothing is passed then we have a problem, be nice
-	if [[ ! ${1+isset} = isset ]];
-	then
-		throw 3
-	fi
-	
-	# if the source file exists then read it else thro and exception
-	if [ -e ${1} ];
-	then
-		. ${1}
-	else
-		# This allows overriding when the appropriate cli flag is set
-		if [[ ${QUIET} = ${TRUE} ]];
-		then
-			SILENT=${TRUE}
-		else
-			SILENT=${FALSE} 
-		fi
-		MSG="Error: ${1} is missing. Execution terminated."
-		throw 1
-	fi
-}
-
-# @method outputMsg
-# @param string $1
-# @global $MSG
-# A simple output catcher to facilitate quiet and silence modes
-function outputMsg() {
-	if [ ${SILENT} -eq ${FALSE} ];
-	then
-		if [[ ! ${1+isset} = isset ]];
-		then
-			echo ${MSG}
-		else
-			echo ${1}
-		fi
-	fi
-}
-
 # @descr This encapsulates the exception handling into a fairly simple
 # and concise package. It makes use of basic parameter passing and executes
 # exception processing based on predetermined action levels. Levels 0-4 are
@@ -313,6 +247,72 @@ function throw(){
 	exit ${EXCEPTION}
 	;;
 	esac
+}
+
+# @method include
+# @param string $1
+# An include file is a convenience container. These are things that are nice to have but may be set via command line or by predefined default values. If the include file is missing the worst thing that should happen is a warning (unless suppressed) should be generated.
+function include()  {
+
+	# if nothing is passed then we have a problem, be nice
+	if [[ ! ${1+isset} = isset ]];
+	then
+		throw 3
+	fi
+	
+	# if the source file exists then read it else thro and exception
+	if [ -e ${1} ];
+		then
+		#outputMsg "Reading ${1}"
+		. ${1}
+	else
+		MSG="Warning: ${1} is missing"
+		throw 2
+	fi
+}
+
+# @method require
+# @param string $1
+# A require file is something that is essential to the operation of the program. Without this file the whole operation will	come crumbling down thus generating an exception error halting all execution.
+function require()  {
+
+	# if nothing is passed then we have a problem, be nice
+	if [[ ! ${1+isset} = isset ]];
+	then
+		throw 3
+	fi
+	
+	# if the source file exists then read it else thro and exception
+	if [ -e ${1} ];
+	then
+		. ${1}
+	else
+		# This allows overriding when the appropriate cli flag is set
+		if [[ ${QUIET} = ${TRUE} ]];
+		then
+			SILENT=${TRUE}
+		else
+			SILENT=${FALSE} 
+		fi
+		MSG="Error: ${1} is missing. Execution terminated."
+		throw 1
+	fi
+}
+
+# @method outputMsg
+# @param string $1
+# @global $MSG
+# A simple output catcher to facilitate quiet and silence modes
+function outputMsg() {
+	if [ ${SILENT} -eq ${FALSE} ];
+	then
+		if [[ ! ${1+isset} = isset ]];
+		then
+			echo ${MSG}
+		else
+			echo ${1}
+		fi
+	fi
 }
 
 # @experimental
