@@ -178,6 +178,22 @@ function getMyHostName() {
 	Host=`hostname -s`
 }
 
+# @method outputMsg
+# @param string $1
+# @global $MSG
+# A simple output catcher to facilitate quiet and silence modes
+function outputMsg() {
+	if [ ${SILENT} -eq ${FALSE} ];
+	then
+		if [[ ! ${1+isset} = isset ]];
+		then
+			echo ${MSG}
+		else
+			echo ${1}
+		fi
+	fi
+}
+
 # @descr This encapsulates the exception handling into a fairly simple
 # and concise package. It makes use of basic parameter passing and executes
 # exception processing based on predetermined action levels. Levels 0-4 are
@@ -296,22 +312,6 @@ function require()  {
 		fi
 		MSG="Error: ${1} is missing. Execution terminated."
 		throw 1
-	fi
-}
-
-# @method outputMsg
-# @param string $1
-# @global $MSG
-# A simple output catcher to facilitate quiet and silence modes
-function outputMsg() {
-	if [ ${SILENT} -eq ${FALSE} ];
-	then
-		if [[ ! ${1+isset} = isset ]];
-		then
-			echo ${MSG}
-		else
-			echo ${1}
-		fi
 	fi
 }
 
