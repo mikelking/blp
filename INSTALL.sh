@@ -11,8 +11,8 @@ if [ -e /usr/local/lib/blp/std.blp ];
 	. /usr/local/lib/blp/std.blp
 	if [ ${Version} = ${blpVer}  ];
 	then
-		echo "blp version ${blpVer} is already installed. Aboarting operation"
-		exit
+		echo "ERROR: blp version ${blpVer} is already installed. Abort operation!"
+		exit 1
 	fi
 fi
 
