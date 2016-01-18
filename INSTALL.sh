@@ -20,16 +20,16 @@ fi
 
 	echo "Installing ${App} version: ${Version}"
 
-	echo "Installing the appropriate libraries."
+	echo "Installing appropriate libraries."
 	if [ ! -e /usr/local/lib/blp ];
 	then
-		mkdir ${blpPath}/blp
+		mkdir -p "${blpPath}/blp"
 	fi
 	
-	cp  *.blp ${blpPath}/blp/
+	cp  *.blp "${blpPath}/blp/"
 
 	echo
-	echo "Installation is complete."
+	echo "Library installation has completed."
 	echo
 
 	./ReleaseNotes
